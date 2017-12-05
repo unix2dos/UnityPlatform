@@ -6,8 +6,8 @@
 //
 //
 
+
 #import "WXApiManager.h"
-//#import "WeChatIOS.h"
 @implementation WXApiManager
 @synthesize view = _view;
 @synthesize show = _show;
@@ -28,7 +28,7 @@
 }
 + (BOOL)isWXAppSupport
 {
-   return [WXApi isWXAppInstalled]&&[WXApi isWXAppSupportApi];
+    return [WXApi isWXAppInstalled]&&[WXApi isWXAppSupportApi];
 }
 - (void)dealloc {
     [_filePath  release];
@@ -38,7 +38,7 @@
 /*初始化一些值*/
 - (void)initValue
 {
-   //初始值
+    //初始值
     _filePath = NULL;
     _text = NULL;
 }
@@ -69,12 +69,12 @@
     [button2 release];
     [session release];
     [timeline release];
-
+    
     
     //    默认隐藏
     [self setView:view];
     [self showShareView:false];
-
+    
 }
 ///*设置分享的文字和图片*/
 //- (void)setFilePath:(NSString*) filePath Text:(NSString*) text
@@ -339,26 +339,20 @@
         [dic setValue:des[@"sex"] forKey:@"sex"];
         [dic setValue:des[@"unionid"] forKey:@"unionid"];
     }
-    [self WXcallBack:1 State:state Resp:dic];
+    [self WXcallBack:EventType::WX_LOGIN State:state Resp:dic];
 }
 - (void)shareState:(int)state  Des:(NSDictionary*) des{
-    [self WXcallBack:2 State:state Resp:des];
+    [self WXcallBack:EventType::WX_SHARE State:state Resp:des];
 }
 /*微信回调*/
-- (void)WXcallBack:(int) type State:(int)state  Resp:(NSDictionary*) resp
+- (void)WXcallBack:(EventType) type State:(int)state  Resp:(NSDictionary*) resp
 {
-    
     NSMutableDictionary* dic = [[[NSMutableDictionary alloc]initWithCapacity:6]autorelease];
-    [dic setValue:@(type)   forKey:@"type"];
     [dic setValue:@(state)   forKey:@"state"];
     if (resp!=NULL) {
         [dic setValue:resp    forKey:@"des"];
     }
-    
-    NSString *jsonString =  [WXApiManager convertToJSONData:dic];
-    jsonString = [jsonString stringByReplacingOccurrencesOfString:@"\\" withString:@""];
-//    std::string dicStr = std::string([jsonString UTF8String]);
-//    WeChatIOS::WXCallBack(dicStr);
+    iOSFunction::sendCSharpMsg(type, dic);
 }
 
 #pragma mark - WXApiDelegate
@@ -377,7 +371,7 @@
                 [self shareState:2 Des:NULL];
                 break;
         }
-
+        
     } else if ([resp isKindOfClass:[SendAuthResp class]]) {
         SendAuthResp* auth = (SendAuthResp*)resp;
         switch ([resp errCode]) {
@@ -393,19 +387,19 @@
                 [self loginState:2 Des:NULL];
                 break;
         }
-
+        
     } else if ([resp isKindOfClass:[AddCardToWXCardPackageResp class]]) {
-
+        
     }
 }
 
 - (void)onReq:(BaseReq *)req {
     if ([req isKindOfClass:[GetMessageFromWXReq class]]) {
-
+        
     } else if ([req isKindOfClass:[ShowMessageFromWXReq class]]) {
-
+        
     } else if ([req isKindOfClass:[LaunchFromWXReq class]]) {
-
+        
     }
 }
 
@@ -419,46 +413,8 @@
     }
     else  // No errors
     {
-       NSLog(@"保存到相册成功！");
+        NSLog(@"保存到相册成功！");
     }
 }
 
-/*字符串转换*/
-+ (NSString*)convertToJSONData:(id)infoDict
-{
-    // Pass 0 if you don't care about the readability of the generated string
-    NSError *error;
-    NSData *jsonData = [NSJSONSerialization dataWithJSONObject:infoDict
-                                                       options:NSJSONWritingPrettyPrinted
-                                                         error:&error];
-    NSString *jsonString = @"";
-    if (! jsonData)
-    {
-        NSLog(@"Got an error: %@", error);
-    }else
-    {
-        jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
-    }
-    jsonString = [jsonString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];  //去除掉首尾的空白字符和换行字符
-    jsonString = [jsonString stringByReplacingOccurrencesOfString:@"\n" withString:@""];
-    return jsonString;
-}
-+ (NSDictionary *)dictionaryWithJsonString:(NSString *)jsonString
-{
-    if (jsonString == nil) {
-        return nil;
-    }
-    
-    NSData *jsonData = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-    NSError *err;
-    NSDictionary *dic = [NSJSONSerialization JSONObjectWithData:jsonData
-                                                        options:NSJSONReadingMutableContainers
-                                                          error:&err];
-    if(err)
-    {
-        NSLog(@"json解析失败：%@",err);
-        return nil;
-    }
-    return dic;
-}
 @end

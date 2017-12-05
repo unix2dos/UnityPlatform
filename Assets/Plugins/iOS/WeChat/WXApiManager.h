@@ -7,9 +7,11 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <string>
 #import "WXApi.h"
-#define WXAPPID @"1"
-#define WXAPPSC @"2"
+#import "iOSFunction.h"
+#define WXAPPID @"wxc99bd144ac341969"
+#define WXAPPSC @"1"
 @interface WXApiManager : NSObject<WXApiDelegate> {
     UIView* _view;
     BOOL _show;
@@ -54,10 +56,7 @@
 - (void)loginState:(int)state  Des:(NSDictionary*) des;
 - (void)shareState:(int)state  Des:(NSDictionary*) des;
 /*微信回调*/
-- (void)WXcallBack:(int) type State:(int)state  Resp:(NSDictionary*) resp;
-/*字典转Json字符串*/
-+ (NSString*)convertToJSONData:(id)infoDict;
-+ (NSDictionary *)dictionaryWithJsonString:(NSString *)jsonString;
+- (void)WXcallBack:(EventType) type State:(int)state  Resp:(NSDictionary*) resp;
 
 @property(nonatomic,retain,readwrite) UIView* view;
 @property(nonatomic,retain,readwrite) NSString* filePath,*text,*refresh,*access,*openid;

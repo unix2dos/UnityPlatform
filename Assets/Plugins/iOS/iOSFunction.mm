@@ -6,6 +6,7 @@
 #import <CoreTelephony/CTTelephonyNetworkInfo.h>
 #import "sys/utsname.h"
 #import "Reachability.h"
+#import "iOSFunction.h"
 #import "WXApiManager.h"
 
 
@@ -42,6 +43,8 @@ static id QueryASIdentifierManager()
     
     return nil;
 }
+
+
 
 ///////////////////////// C# 调用过来的 /////////////////////////
 extern "C" {
