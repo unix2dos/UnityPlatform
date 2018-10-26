@@ -1,6 +1,6 @@
 # UnityPlatform
 
-### future
+### 功能
 1. Unity和Lua间的消息传递
 2. Unity获取 iOS, Android 的设备信息
 3. Unity与 iOS, Android 之间的消息传递
